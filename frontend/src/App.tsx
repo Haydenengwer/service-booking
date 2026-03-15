@@ -5,6 +5,7 @@ import { theme } from './theme';
 import Home from './pages/Home';
 import ServiceDetails from './pages/ServiceDetails';
 import Success from './pages/Success';
+import ChatWidget from './components/ChatWidget';
 import './App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route path="/service/:id" element={<ServiceDetails />} />
           <Route path="/success" element={<Success />} />
         </Routes>
+        <ChatWidget />
       </Router>
     </ThemeProvider>
   );
