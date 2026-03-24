@@ -14,18 +14,21 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import type { Service, BookingFormData } from '../types/service';
 import { submitBooking } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function ServiceDetails() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const service = (location.state?.service as Service) || { name: 'Service' };
 
   const [formData, setFormData] = useState<BookingFormData>({
     serviceName: service.name,
     issueDescription: '',
-    name: '',
+    name: user?.name || '',
     zipCode: '',
-    email: '',
+    email: user?.email || '',
+    phone: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,20 +41,14 @@ export default function ServiceDetails() {
     if (!formData.issueDescription.trim()) {
       newErrors.issueDescription = 'Please describe the issue';
     }
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
     if (!formData.zipCode.trim()) {
       newErrors.zipCode = 'Zip code is required';
     }
     if (!formData.zipCode.match(/^\d{5}(-\d{4})?$/)) {
       newErrors.zipCode = 'Please enter a valid zip code';
     }
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    }
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      newErrors.email = 'Please enter a valid email address';
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
     }
 
     setErrors(newErrors);
@@ -62,16 +59,9 @@ export default function ServiceDetails() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error for this field when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: '',
-      }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
@@ -92,24 +82,14 @@ export default function ServiceDetails() {
     }
   };
 
-  const handleBack = () => {
-    navigate('/');
-  };
-
   return (
     <Container maxWidth="sm" sx={{ py: 4 }}>
       <Box sx={{ mb: 3 }}>
         <Link
           component="button"
           variant="body2"
-          onClick={handleBack}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-            cursor: 'pointer',
-            textDecoration: 'none',
-          }}
+          onClick={() => navigate('/')}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', textDecoration: 'none' }}
         >
           <ArrowBackIcon fontSize="small" />
           Back to Services
@@ -122,7 +102,7 @@ export default function ServiceDetails() {
             Book {service.name}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary" gutterBottom>
-            Tell us about your issue
+            Booking for {user?.name} ({user?.email})
           </Typography>
 
           {submitError && (
@@ -147,19 +127,6 @@ export default function ServiceDetails() {
 
             <TextField
               fullWidth
-              id="name"
-              name="name"
-              label="Full Name"
-              value={formData.name}
-              onChange={handleInputChange}
-              error={!!errors.name}
-              helperText={errors.name}
-              placeholder="John Doe"
-              required
-            />
-
-            <TextField
-              fullWidth
               id="zipCode"
               name="zipCode"
               label="Zip Code"
@@ -173,15 +140,15 @@ export default function ServiceDetails() {
 
             <TextField
               fullWidth
-              id="email"
-              name="email"
-              label="Email Address"
-              type="email"
-              value={formData.email}
+              id="phone"
+              name="phone"
+              label="Phone Number"
+              type="tel"
+              value={formData.phone}
               onChange={handleInputChange}
-              error={!!errors.email}
-              helperText={errors.email}
-              placeholder="john@example.com"
+              error={!!errors.phone}
+              helperText={errors.phone}
+              placeholder="555-555-5555"
               required
             />
 

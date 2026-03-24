@@ -37,11 +37,12 @@ public class AuthController {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPhone(request.getPhone());
         userRepository.save(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AuthResponse(token, user.getName(), user.getEmail()));
+                .body(new AuthResponse(token, user.getName(), user.getEmail(), user.getPhone()));
     }
 
     @PostMapping("/login")
@@ -50,7 +51,7 @@ public class AuthController {
                 .filter(user -> passwordEncoder.matches(request.getPassword(), user.getPassword()))
                 .map(user -> {
                     String token = jwtUtil.generateToken(user.getEmail());
-                    return ResponseEntity.ok((Object) new AuthResponse(token, user.getName(), user.getEmail()));
+                    return ResponseEntity.ok((Object) new AuthResponse(token, user.getName(), user.getEmail(), user.getPhone()));
                 })
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("message", "Invalid email or password")));

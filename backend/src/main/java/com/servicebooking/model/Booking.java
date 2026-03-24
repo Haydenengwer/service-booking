@@ -16,6 +16,7 @@ public class Booking {
     private String name;
     private String zipCode;
     private String email;
+    private String phone;
     private LocalDateTime createdAt;
 
     @PrePersist
@@ -31,6 +32,7 @@ public class Booking {
     public String getName() { return name; }
     public String getZipCode() { return zipCode; }
     public String getEmail() { return email; }
+    public String getPhone() { return phone; }
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setId(Long id) { this.id = id; }
@@ -39,5 +41,6 @@ public class Booking {
     public void setName(String name) { this.name = name; }
     public void setZipCode(String zipCode) { this.zipCode = zipCode; }
     public void setEmail(String email) { this.email = email; }
+    public void setPhone(String phone) { this.phone = phone; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

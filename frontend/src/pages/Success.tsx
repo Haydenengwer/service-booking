@@ -98,6 +98,14 @@ export default function Success() {
                     {formData.zipCode}
                   </Typography>
                 </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="body2" color="textSecondary">
+                    Phone:
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    {formData.phone}
+                  </Typography>
+                </Box>
               </Box>
             </Paper>
           )}
