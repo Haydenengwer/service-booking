@@ -8,12 +8,15 @@ import {
   Box,
   CircularProgress,
   Alert,
+  Button,
 } from '@mui/material';
 import type { Service } from '../types/service';
 import { fetchServices } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,13 +34,23 @@ export default function Home() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h1" gutterBottom>
-          Home Services Booking Platform
-        </Typography>
-        <Typography variant="h6" color="textSecondary">
-          Select a service to get started
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box sx={{ textAlign: 'center', flex: 1 }}>
+          <Typography variant="h1" gutterBottom>
+            Home Services Booking Platform
+          </Typography>
+          <Typography variant="h6" color="textSecondary">
+            Select a service to get started
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
+          <Typography variant="body2" color="textSecondary">
+            {user?.name}
+          </Typography>
+          <Button variant="outlined" size="small" onClick={logout}>
+            Sign Out
+          </Button>
+        </Box>
       </Box>
 
       {loading && (
