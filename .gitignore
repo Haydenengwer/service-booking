@@ -24,6 +24,10 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables
+.env
+.env.*
+
 # Java / Spring Boot / Gradle
 backend/build/
 backend/.gradle/
