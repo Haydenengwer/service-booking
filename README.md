@@ -28,8 +28,9 @@ The backend persists all bookings to a SQL Server database and seeds the service
 | Backend Framework | Spring Boot | 3.4.3 |
 | Language (Backend) | Java | 17 |
 | ORM | Spring Data JPA / Hibernate | — |
-| Database | Microsoft SQL Server | local |
+| Database | Microsoft SQL Server | local / Docker |
 | Build Tool (Backend) | Gradle | — |
+| Containerization | Docker + Docker Compose | — |
 
 ---
 
@@ -80,6 +81,62 @@ Service-booking/
 - Microsoft SQL Server running locally on port `1433`
 
 ---
+
+## Docker Setup (Recommended)
+
+The easiest way to run the full stack is with Docker. This spins up SQL Server, the backend, and the frontend all at once.
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- Docker Desktop must be set to **Linux containers** (right-click the tray icon to switch)
+
+### Run
+
+```bash
+# From the project root
+docker-compose up --build
+```
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost |
+| Backend API | http://localhost:8080/api |
+| SQL Server | localhost:1433 |
+
+### Stop
+
+```bash
+docker-compose down
+```
+
+To also delete the database volume (wipes all data):
+
+```bash
+docker-compose down -v
+```
+
+### View Bookings via CLI
+
+```bash
+docker exec service-booking-sqlserver-1 //opt/mssql-tools18/bin/sqlcmd \
+  -S localhost -U sa -P "Pass@word1" -C \
+  -Q "SELECT * FROM ServiceBookingDB.dbo.bookings"
+```
+
+### Connect with Azure Data Studio / SSMS
+
+| Setting | Value |
+|---|---|
+| Server | `localhost,1433` |
+| Authentication | SQL Login |
+| Username | `sa` |
+| Password | `Pass@word1` |
+| Trust server certificate | ✓ |
+
+---
+
+## Local Setup (Manual)
 
 ### SQL Server Setup
 
