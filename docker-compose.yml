@@ -2,7 +2,7 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      SA_PASSWORD: Pass@word1
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
       MSSQL_PID: Developer
     ports:
@@ -12,7 +12,7 @@ services:
       - ./docker/sqlserver-entrypoint.sh:/entrypoint.sh
     entrypoint: ["/bin/bash", "/entrypoint.sh"]
     healthcheck:
-      test: ["CMD-SHELL", "( /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Pass@word1' -C -Q 'SELECT 1' 2>/dev/null || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Pass@word1' -Q 'SELECT 1' 2>/dev/null ) && echo healthy"]
+      test: ["CMD-SHELL", "( /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$SA_PASSWORD\" -C -Q 'SELECT 1' 2>/dev/null || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P \"$SA_PASSWORD\" -Q 'SELECT 1' 2>/dev/null ) && echo healthy"]
       interval: 15s
       timeout: 10s
       retries: 10
@@ -25,9 +25,9 @@ services:
     environment:
       DB_HOST: sqlserver
       DB_PORT: 1433
-      DB_NAME: ServiceBookingDB
-      DB_USERNAME: sa
-      DB_PASSWORD: Pass@word1
+      DB_NAME: ${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${SA_PASSWORD}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
     depends_on:
       sqlserver:

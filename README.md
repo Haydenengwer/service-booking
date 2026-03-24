@@ -91,6 +91,23 @@ The easiest way to run the full stack is with Docker. This spins up SQL Server, 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 - Docker Desktop must be set to **Linux containers** (right-click the tray icon to switch)
 
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in your values before running:
+
+```bash
+cp .env.example .env
+```
+
+```env
+SA_PASSWORD=your_password_here
+DB_NAME=ServiceBookingDB
+DB_USERNAME=sa
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+> Never commit `.env` to source control — it is already listed in `.gitignore`.
+
 ### Run
 
 ```bash
@@ -116,23 +133,39 @@ To also delete the database volume (wipes all data):
 docker-compose down -v
 ```
 
-### View Bookings via CLI
+### Viewing the Database
 
-```bash
-docker exec service-booking-sqlserver-1 //opt/mssql-tools18/bin/sqlcmd \
-  -S localhost -U sa -P "Pass@word1" -C \
-  -Q "SELECT * FROM ServiceBookingDB.dbo.bookings"
-```
+**Option 1 — Azure Data Studio or SSMS (GUI)**
 
-### Connect with Azure Data Studio / SSMS
+Connect with the credentials from your `.env` file:
 
 | Setting | Value |
 |---|---|
 | Server | `localhost,1433` |
 | Authentication | SQL Login |
-| Username | `sa` |
-| Password | `Pass@word1` |
+| Username | `sa` (or your `DB_USERNAME`) |
+| Password | your `SA_PASSWORD` |
 | Trust server certificate | ✓ |
+
+Once connected, expand **ServiceBookingDB → Tables** to browse `bookings` and `services`.
+
+**Option 2 — Docker CLI**
+
+Run queries directly against the container without any GUI tool:
+
+```bash
+# View all bookings
+docker exec service-booking-sqlserver-1 //opt/mssql-tools18/bin/sqlcmd \
+  -S localhost -U sa -P "$SA_PASSWORD" -C \
+  -Q "SELECT * FROM ServiceBookingDB.dbo.bookings"
+
+# View all services
+docker exec service-booking-sqlserver-1 //opt/mssql-tools18/bin/sqlcmd \
+  -S localhost -U sa -P "$SA_PASSWORD" -C \
+  -Q "SELECT * FROM ServiceBookingDB.dbo.services"
+```
+
+Replace `$SA_PASSWORD` with your actual password if your shell doesn't pick it up from `.env`.
 
 ---
 
@@ -168,14 +201,14 @@ CREATE TABLE bookings (
 
 > The `DataSeeder` component auto-populates the `services` table with 8 records on application startup if it is empty.
 
-Default SQL Server credentials configured in `application.properties`:
+Default SQL Server connection configured in `application.properties` — update with your own credentials:
 
 | Setting | Value |
 |---|---|
 | Host | `localhost:1433` |
 | Database | `ServiceBookingDB` |
 | Username | `sa` |
-| Password | `Pass@word1` |
+| Password | *(set in your local SQL Server)* |
 
 ---
 
